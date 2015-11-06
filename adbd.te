@@ -4,8 +4,9 @@ type adbd, domain, mlstrustedsubject;
 
 userdebug_or_eng(`
   allow adbd self:process setcurrent;
-  allow adbd su:process dyntransition;
 ')
+
+allow adbd su:process dyntransition;
 
 domain_auto_trans(adbd, shell_exec, shell)
 

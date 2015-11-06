@@ -46,21 +46,21 @@ allow domain adbd:unix_stream_socket connectto;
 allow domain adbd:fd use;
 allow domain adbd:unix_stream_socket { getattr getopt read write shutdown };
 
+# Same as adbd rules above, except allow su to do the same thing
+allow domain su:unix_stream_socket connectto;
+allow domain su:fd use;
+allow domain su:unix_stream_socket { getattr getopt read write shutdown };
+
+binder_call({ domain -init }, su)
+
+# Running something like "pm dump com.android.bluetooth" requires
+# fifo writes
+allow domain su:fifo_file { write getattr };
+
+# allow "gdbserver --attach" to work for su.
+allow domain su:process sigchld;
+
 userdebug_or_eng(`
-  # Same as adbd rules above, except allow su to do the same thing
-  allow domain su:unix_stream_socket connectto;
-  allow domain su:fd use;
-  allow domain su:unix_stream_socket { getattr getopt read write shutdown };
-
-  binder_call({ domain -init }, su)
-
-  # Running something like "pm dump com.android.bluetooth" requires
-  # fifo writes
-  allow domain su:fifo_file { write getattr };
-
-  # allow "gdbserver --attach" to work for su.
-  allow domain su:process sigchld;
-
   # Allow writing coredumps to /cores/*
   allow domain coredump_file:file create_file_perms;
   allow domain coredump_file:dir ra_dir_perms;
@@ -295,7 +295,7 @@ neverallow {
     -appdomain
     -dumpstate
     -shell
-    userdebug_or_eng(`-su')
+    -su
     -system_server
     -zygote
 } { file_type -system_file -exec_type }:file execute;
@@ -400,7 +400,7 @@ neverallow { domain -su } { file_type fs_type dev_type }:{ lnk_file fifo_file so
 # Nobody should be able to execute su on user builds.
 # On userdebug/eng builds, only dumpstate, shell, and
 # su itself execute su.
-neverallow { domain -init -untrusted_app userdebug_or_eng(`-dumpstate -shell -su') } su_exec:file no_x_file_perms;
+neverallow { domain -init -untrusted_app -dumpstate -shell -su } su_exec:file no_x_file_perms;
 
 # Do not allow the introduction of new execmod rules. Text relocations
 # and modification of executable pages are unsafe.

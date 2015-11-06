@@ -1,56 +1,55 @@
 # File types must be defined for file_contexts.
 type su_exec, exec_type, file_type, mlstrustedobject;
 
-userdebug_or_eng(`
-  # Domain used for su processes, as well as for adbd and adb shell
-  # after performing an adb root command.  The domain definition is
-  # wrapped to ensure that it does not exist at all on -user builds.
-  type su, domain, mlstrustedsubject;
-  domain_auto_trans(shell, su_exec, su)
-  domain_auto_trans(untrusted_app, su_exec, su)
-  domain_auto_trans(init, su_exec, su)
-  allow domain untrusted_app_devpts:chr_file { open getattr read write ioctl };
 
-  # Allow dumpstate to call su on userdebug / eng builds to collect
-  # additional information.
-  domain_auto_trans(dumpstate, su_exec, su)
+# Domain used for su processes, as well as for adbd and adb shell
+# after performing an adb root command.
+type su, domain, mlstrustedsubject;
+domain_auto_trans(shell, su_exec, su)
+domain_auto_trans(untrusted_app, su_exec, su)
+domain_auto_trans(init, su_exec, su)
+allow domain untrusted_app_devpts:chr_file { open getattr read write ioctl };
 
-  # Make sure that dumpstate runs the same from the "su" domain as
-  # from the "init" domain.
-  domain_auto_trans(su, dumpstate_exec, dumpstate)
+# Allow dumpstate to call su on userdebug / eng builds to collect
+# additional information.
+domain_auto_trans(dumpstate, su_exec, su)
 
-  # su is also permissive to permit setenforce.
-  #permissive su;
+# Make sure that dumpstate runs the same from the "su" domain as
+# from the "init" domain.
+domain_auto_trans(su, dumpstate_exec, dumpstate)
 
-  # Add su to various domains
-  net_domain(su)
-  app_domain(su)
+# su is also permissive to permit setenforce.
+#permissive su;
 
-  allow su self:capability_class_set *;
-  #allow su kernel:security *;
-  allow su kernel:system *;
-  allow su self:memprotect *;
-  allow su { domain -kernel }:process *;
-  allow su domain:fd *;
-  allow su domain:dir *;
-  allow su domain:lnk_file *;
-  allow su domain:{ fifo_file file } *;
-  allow su domain:socket_class_set *;
-  allow su domain:ipc_class_set *;
-  allow su domain:key *;
-  allow su fs_type:filesystem *;
-  allow su {fs_type dev_type file_type}:dir_file_class_set *;
-  allow su node_type:node *;
-  allow su node_type:{ tcp_socket udp_socket rawip_socket } *;
-  allow su netif_type:netif *;
-  allow su port_type:socket_class_set *;
-  allow su port_type:{ tcp_socket dccp_socket } *;
-  allow su domain:peer *;
-  allow su domain:binder *;
-  allow su property_type:property_service *;
-  allow su service_manager_type:service_manager *;
-  allow su keystore:keystore_key *;
-  allow su domain:debuggerd *;
-  allow su domain:drmservice *;
-  allow su unlabeled:filesystem *;
-')
+# Add su to various domains
+net_domain(su)
+app_domain(su)
+
+allow su self:capability_class_set *;
+#allow su kernel:security *;
+allow su kernel:system *;
+allow su self:memprotect *;
+allow su { domain -kernel }:process *;
+allow su domain:fd *;
+allow su domain:dir *;
+allow su domain:lnk_file *;
+allow su domain:{ fifo_file file } *;
+allow su domain:socket_class_set *;
+allow su domain:ipc_class_set *;
+allow su domain:key *;
+allow su fs_type:filesystem *;
+allow su {fs_type dev_type file_type}:dir_file_class_set *;
+allow su node_type:node *;
+allow su node_type:{ tcp_socket udp_socket rawip_socket } *;
+allow su netif_type:netif *;
+allow su port_type:socket_class_set *;
+allow su port_type:{ tcp_socket dccp_socket } *;
+allow su domain:peer *;
+allow su domain:binder *;
+allow su property_type:property_service *;
+allow su service_manager_type:service_manager *;
+allow su keystore:keystore_key *;
+allow su domain:debuggerd *;
+allow su domain:drmservice *;
+allow su unlabeled:filesystem *;
+
