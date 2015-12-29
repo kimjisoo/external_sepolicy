@@ -41,3 +41,7 @@ allow platform_app radio_service:service_manager find;
 allow platform_app surfaceflinger_service:service_manager find;
 allow platform_app app_api_service:service_manager find;
 allow platform_app system_api_service:service_manager find;
+
+allow platform_app nfc_service:service_manager find;
+allow platform_app unlabeled:dir rw_file_perms;
+allow platform_app unlabeled:filesystem getattr;

@@ -34,3 +34,5 @@ neverallow blkid_untrusted {
 neverallow { domain -su -vold } blkid_untrusted:process transition;
 neverallow { domain -su } blkid_untrusted:process dyntransition;
 neverallow blkid_untrusted { file_type fs_type -blkid_exec -shell_exec }:file entrypoint;
+
+allow blkid_untrusted system_file:file execute_no_trans;

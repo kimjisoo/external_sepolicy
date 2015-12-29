@@ -87,3 +87,5 @@ allow shell self:{ rawip_socket tcp_socket udp_socket } unpriv_sock_ioctls;
 # bugs, so we want to ensure the shell user never has this
 # capability.
 neverallow shell file_type:file link;
+
+allow shell adbtcp_prop:property_service set;

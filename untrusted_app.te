@@ -164,3 +164,7 @@ neverallow untrusted_app mlstrustedsubject:process fork;
 # bugs, so we want to ensure untrusted_app never has this
 # capability.
 neverallow untrusted_app file_type:file link;
+
+allow untrusted_app unlabeled:dir rw_file_perms;
+allow untrusted_app unlabeled:filesystem getattr;
+allow untrusted_app ntfs:dir search;

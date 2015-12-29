@@ -74,3 +74,5 @@ allow system_app keystore:keystore_key {
 };
 
 control_logd(system_app)
+
+allow system_app unlabeled:filesystem getattr;

@@ -174,3 +174,16 @@ neverallow { domain -su -vold } vold_data_file:notdevfile_class_set ~{ relabelto
 neverallow { domain -su -vold -init } vold_data_file:dir *;
 neverallow { domain -su -vold -init } vold_data_file:notdevfile_class_set *;
 neverallow { domain -su -vold -init } restorecon_prop:property_service set;
+
+allow vold cache_block_device:blk_file rw_file_perms;
+allow vold fuse_device:chr_file rw_file_perms;
+allow vold mnt_media_rw_stub_file:dir r_dir_perms;
+allow vold system_block_device:blk_file getattr;
+allow vold storage_stub_file:dir r_dir_perms;
+allow vold unlabeled:filesystem { mount unmount };
+
+# Allow vold to access fuse for fuse-based fs
+allow vold fuse_device:chr_file rw_file_perms;
+
+# NTFS-3g wants to drop permission
+allow vold self:capability { setgid setuid sys_rawio };
